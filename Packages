@@ -31,7 +31,7 @@ Architectures: iphoneos-arm64
 Components: main
 Origin: Reposi3
 Label: Nikitos Repo
-Suite: stable
+Suite: stableа
 Version: 1.0
 Date: $(date -Ru)
 EOF
