@@ -18,7 +18,7 @@ Section: Tweaks
 Maintainer: Reposi3 <reposithree@gmail.com>
 Depends: firmware (<7.0)
 Architecture: iphoneos-arm64
-Filename: ./debs/com.ivintagelover.solidglass_Rootless
+Filename: ./debs/com.ivintagelover.solidglass_2.0_Rootless
 Size: 860
 MD5sum: 8c606f0c05217aa2a20949091fe516f0
 Description: This is a sample old package. Firmware should be lower than 7.0
