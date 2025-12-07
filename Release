@@ -3,6 +3,6 @@ Label: nikitabelskii2014-cell.github.io
 Suite: stable
 Version: 1.0
 Codename: ios
-Architectures: nikitabelskii2014-cell.github.io
+Architectures: iphoneos-arm64e
 Components: main
 Description: nikitabelskii2014-cell.github.io
