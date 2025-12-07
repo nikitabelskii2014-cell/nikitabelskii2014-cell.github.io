@@ -1,35 +1,49 @@
 #!/bin/bash
-# updaterepo.sh - для твоего GitHub Repososi
+# updaterepo.sh - ФИНАЛЬНАЯ ВЕРСИЯ для GitHub + Sileo категории
 
-# 1. Фиксим control в .deb (убираем mobilesubstrate)
+# Создаём структуру
+mkdir -p dists/stable/main/binary-iphoneos-arm64
+
+# 1. Фиксим ВСЕ .deb (добавляем Section: Tweaks + убираем mobilesubstrate)
+rm -rf temp/
 for deb in debs/*.deb; do
+  mkdir -p temp/DEBIAN
   dpkg-deb -x "$deb" temp/
-  sed -i 's/mobilesubstrate/com.sileo.substitute/g' temp/DEBIAN/control
-  sed -i '/mobilesubstrate/d' temp/DEBIAN/control
-  dpkg-deb -b temp/ "$deb"
-  rm -rf temp/
+  
+  # Фиксим control
+  cat > temp/DEBIAN/control << EOF
+Package: $(dpkg-deb -f "$deb" Package)
+Version: $(dpkg-deb -f "$deb" Version)
+Section: Tweaks
+Architecture: iphoneos-arm64
+Maintainer: Reposi3 <reposithree@gmail.com>
+Author: Reposi3 <reposithree@gmail.com>
+Depends: firmware (>=15.0), com.sileo.substitute
+Description: $(dpkg-deb -f "$deb" Description)
+EOF
+  
+  # Пересобираем .deb
+  dpkg-deb -b temp/ "${deb%.deb}_fixed.deb"
+  mv "${deb%.deb}_fixed.deb" "$deb"
 done
+rm -rf temp/
 
 # 2. Генерируем Packages.gz
-dpkg-scanpackages debs/ /dev/null | gzip > Packages.gz
+dpkg-scanpackages .debs /dev/null | gzip -c > dists/stable/main/binary-iphoneos-arm64/Packages.gz
 
 # 3. Создаём Release
-cat > Release << EOF
+cat > Release << 'EOF'
 Architectures: iphoneos-arm64
 Components: main
 Origin: Reposi3
 Label: Nikitos Repo
 Suite: stable
 Version: 1.0
-Date: $(date -Ru)
+Date: Sun, 07 Dec 2025 20:52:00 +0500
 EOF
 
-# Хэши
+# 4. Хэши
 cd dists/stable/main/binary-iphoneos-arm64/
 sha1sum Packages.gz > SHA1Sums
 sha256sum Packages.gz > SHA256Sums
-cd ../../../
-
-gpg --clearsign -o InRelease Release
-
-echo "✅ Готово! Пушь на GitHub и обнови Sileo"
+cd ../../..
